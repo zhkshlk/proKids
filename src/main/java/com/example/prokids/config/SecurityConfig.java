@@ -3,7 +3,6 @@ package com.example.prokids.config;
 
 
 import com.example.prokids.Services.MyUserDetailService;
-import com.example.prokids.config.EncoderConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;

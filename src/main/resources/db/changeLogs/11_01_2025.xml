@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="add-category" author="zhkshlk">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="categories"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE categories
+            (
+                id varchar default gen_random_uuid() not null primary key,
+                name varchar(255) not null,
+                description text
+            );
+        </sql>
+    </changeSet>
+    <changeSet id="add" author="zhkshlk">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="products"/>
+            </not>
+        </preConditions>
+        <sql>
+
+            CREATE TABLE products
+            (
+                id varchar default gen_random_uuid() not null primary key,
+                name varchar(255) not null,
+                price double precision not null,
+                category_id varchar constraint fk_category references categories,
+                description text
+            )
+        </sql>
+    </changeSet>
+
+
+</databaseChangeLog>
