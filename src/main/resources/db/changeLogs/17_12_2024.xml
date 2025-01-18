@@ -50,9 +50,6 @@
         </sql>
     </changeSet>
 
-
-
-
     <changeSet id="6" author="zhkshlk">
         <loadData tableName="roles" file="data/roles.csv" relativeToChangelogFile="true" separator=";"/>
     </changeSet>
