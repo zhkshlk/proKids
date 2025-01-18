@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@RequiredArgsConstructor
 @Table(name = "texts")
 public class Text {
     @Id
