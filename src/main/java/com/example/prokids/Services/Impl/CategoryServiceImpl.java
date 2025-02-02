@@ -5,6 +5,7 @@ import com.example.prokids.Services.CategoryService;
 import com.example.prokids.repositories.CategoryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 
 public class CategoryServiceImpl implements CategoryService {
+    @Autowired
     private CategoryRepository categoryRepository;
     @Override
     public Category findById(String id) {

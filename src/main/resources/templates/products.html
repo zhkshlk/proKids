@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Продукты</title>
+</head>
+<body>
+<h1>Список продуктов</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Название</th>
+        <th>Цена</th>
+        <th>Описание</th>
+        <th>Изображение</th>
+        <th>Категория</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${products}">
+        <td th:if="${product != null}" th:text="${product.name}"></td>
+        <td th:if="${product != null}" th:text="${product.price}"></td>
+        <td th:if="${product != null}" th:text="${product.description}"></td>
+        <td th:if="${product.image != null}">
+            <img th:src="'data:image/png;base64,' + ${product.image}" alt="Product Image" />
+        </td>
+        <td th:if="${product != null}" th:text="${product.accessories}">
+
+        </td>
+        <td th:text="${product.category.name}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

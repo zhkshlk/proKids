@@ -2,12 +2,13 @@ package com.example.prokids.controllers;
 
 import com.example.prokids.Model.Product;
 import com.example.prokids.Services.CategoryService;
-import com.example.prokids.Services.Impl.ProductServiceImpl;
 import com.example.prokids.Services.ProductService;
+import com.example.prokids.repositories.ProductRepository;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +16,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 
 @Controller
 @RequestMapping("/products")
 public class ProductController {
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductRepository productRepository;
     @Autowired
     private CategoryService categoryService;
+
 
     @GetMapping("/{id}/image")
     public ResponseEntity<String> getProductImage(
@@ -56,5 +62,23 @@ public class ProductController {
         }
         productService.saveProduct(product);
         return "redirect:/products/create";
+    }
+    @GetMapping("/products")
+    public String getAllProducts(Model model) {
+        List<Product> products = productRepository.findAll();
+        model.addAttribute("products", products);
+        return "products";
+    }
+
+    @GetMapping("product/{id}")
+    public String getProduct (@PathVariable("id") String id, Model model) {
+        Product product = productRepository.findById(id).orElse(null);
+        if (product != null) {
+            model.addAttribute("product", product);
+            return "product";
+        }
+        else {
+            return "productNotFound";
+        }
     }
 }

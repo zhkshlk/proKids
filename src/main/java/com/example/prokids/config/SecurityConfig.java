@@ -1,7 +1,5 @@
 package com.example.prokids.config;
 
-
-
 import com.example.prokids.Services.MyUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,12 +42,10 @@ public class SecurityConfig {
             .build();
     }
 
-
     @Bean
     public UserDetailsService userDetailService() {
         return myUserDetailService;
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -58,5 +54,4 @@ public class SecurityConfig {
         daoAuthenticationProvider.setPasswordEncoder(encoderConfig.bCryptPasswordEncoder());
         return daoAuthenticationProvider;
     }
-
 }
