@@ -54,9 +54,9 @@ public class JwtServiceImpl {
         }
 
         if (Objects.equals(tokenType, "refresh")) {
-            return generateToken(claims, userDetails, getRefreshSigningKey(), 10 * 60 * 1000);
+            return generateToken(claims, userDetails, getRefreshSigningKey(), 7 * 24 * 60 * 60 * 1000); // 7 дней
         } else {
-            return generateToken(claims, userDetails, getAccessSigningKey(), 1 * 60 * 1000);
+            return generateToken(claims, userDetails, getAccessSigningKey(), 15 * 60 * 1000); // 15 минут
         }
     }
 
