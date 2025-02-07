@@ -115,7 +115,6 @@
             <version>3.3.2</version>
         </dependency>
     </dependencies>
-
     <build>
         <finalName>a</finalName>
         <plugins>
@@ -129,6 +128,21 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>4.27.0</version>
+                <configuration>
+                    <!-- Путь к файлу changelog -->
+                    <changeLogFile>src/main/resources/db/master-log.xml</changeLogFile>
+
+                    <!-- Указываем параметры подключения к базе данных -->
+                    <url>jdbc:postgresql://localhost:5432/prokids</url> <!-- URL базы данных -->
+                    <username>postgres</username> <!-- Имя пользователя базы данных -->
+                    <password>5462432</password> <!-- Пароль к базе данных -->
+                    <driver>org.postgresql.Driver</driver> <!-- Драйвер для подключения -->
                 </configuration>
             </plugin>
         </plugins>
