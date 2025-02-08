@@ -2,7 +2,6 @@ package com.example.prokids.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
 
 @Data
 @ToString
@@ -10,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "roles")
-public class Role implements GrantedAuthority {
+public class Role {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -18,8 +17,4 @@ public class Role implements GrantedAuthority {
     @Column(name = "role_name")
     private String roleName;
 
-    @Override
-    public String getAuthority() {
-        return this.roleName;
-    }
 }

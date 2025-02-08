@@ -13,7 +13,7 @@ import lombok.Setter;
 public class UserDao {
     private String id;
     @NotEmpty
-    private String login;
+    private String username;
     @NotEmpty
     private String password;
 }

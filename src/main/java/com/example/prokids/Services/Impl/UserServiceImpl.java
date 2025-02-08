@@ -1,26 +1,28 @@
 package com.example.prokids.Services.Impl;
 
 
+import com.example.prokids.Model.Role;
 import com.example.prokids.Model.User;
 import com.example.prokids.Services.UserService;
-import com.example.prokids.repositories.RoleRepository;
 import com.example.prokids.repositories.UserRepository;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Data
 public class UserServiceImpl implements UserService {
-    private final String USER_ROLE_ID = "1";
-    private final String ADMIN_ROLE_ID = "2";
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    private PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Override
     public User findById(String id) {
         return userRepository.findById(id).orElse(null);
@@ -35,19 +37,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByLogin(String login) {
-        return userRepository.findByLogin(login).orElse(null);
+    public User getByUsername(String username) {
+        return userRepository.getByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
     }
 
     @Override
     public User saveUser(User myUser) {
-        if (!userRepository.findByLogin(myUser.getLogin()).isPresent()) {
-            myUser.setPassword(bCryptPasswordEncoder.encode(myUser.getPassword()));
-            myUser.setRoles(List.of(roleRepository.findById(USER_ROLE_ID).get()));
+        if (userRepository.getByUsername(myUser.getUsername()).isEmpty() && userRepository.getByEmail(myUser.getEmail()).isEmpty()) {
+            myUser.setPassword(myUser.getPassword());
+            myUser.setRoles(List.of(myUser.getRoles().toArray(new Role[0])));
+            myUser.setEmail(myUser.getEmail());
+            myUser.setEnabled(myUser.isEnabled());
             return userRepository.save(myUser);
-        }else {
-            return null;
+        } else {
+            throw new RuntimeException("Пользователь с такими данными уже существует");
         }
+    }
+
+    public UserDetailsService userDetailsService() {
+        return this::getByUsername;
     }
 
 }
