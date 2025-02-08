@@ -1,11 +1,14 @@
 package com.example.prokids.Services.Impl;
 
+import com.example.prokids.Model.Token;
 import com.example.prokids.Model.User;
+import com.example.prokids.repositories.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -19,11 +22,18 @@ import java.util.function.Function;
 
 @Service
 public class JwtServiceImpl {
+    private TokenRepository tokenRepository;
+    @Autowired
+    public JwtServiceImpl(TokenRepository tokenRepository) {
+        this.tokenRepository = tokenRepository;
+    }
+
     @Value("${jwt.secret.access}")
     private String jwtSecretAccessKey;
 
     @Value("${jwt.secret.refresh}")
     private String jwtSecretRefreshKey;
+
 
     private Key getAccessSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecretAccessKey);
@@ -96,5 +106,11 @@ public class JwtServiceImpl {
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public boolean isTokenRevoked(String token) {
+        return tokenRepository.findByToken(token)
+                .map(Token::isRevoked)
+                .orElse(true);
     }
 }
