@@ -1,18 +1,23 @@
 package com.example.prokids.Services.Impl;
 
 import com.example.prokids.Model.Role;
+import com.example.prokids.Model.Token;
 import com.example.prokids.Model.User;
 import com.example.prokids.Services.AuthenticationService;
 import com.example.prokids.dto.*;
 import com.example.prokids.repositories.RoleRepository;
+import com.example.prokids.repositories.TokenRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +27,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final TokenRepository tokenRepository;
 
     @Override
     public LoginResponse registration(UserCreate request) {
@@ -40,6 +46,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
+
+        Token token = new Token();
+        token.setToken(refreshToken);
+        token.setUser(user);
+
+        tokenRepository.save(token);
 
         LoginResponse response = new LoginResponse(accessToken, refreshToken);
         return response;
@@ -63,6 +75,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
 
+        Token token = new Token();
+        token.setToken(refreshToken);
+        token.setUser((User) user);
+
+        tokenRepository.save(token);
+
         LoginResponse response = new LoginResponse(accessToken, refreshToken);
         return response;
     }
@@ -71,6 +89,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public RefreshResponse refresh(RefreshRequest request) {
         String username = jwtService.extractUserName(request.getRefreshToken());
         User user = userService.getByUsername(username);
+        boolean isTokenRevoked = jwtService.isTokenRevoked(request.getRefreshToken());
+
+        if (isTokenRevoked) {
+            throw new BadCredentialsException("Доступ запрещен");
+        }
+
         if (jwtService.isTokenValid(request.getRefreshToken(), user)) {
             var accessToken = jwtService.generateAccessToken(user);
             RefreshResponse response = new RefreshResponse();
@@ -78,6 +102,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return response;
         } else {
             throw new AccessDeniedException("Доступ запрещен");
+        }
+    }
+
+    @Override
+    public void logout(LogoutRequest request) {
+        Optional<Token> optionalToken = tokenRepository.findByToken(request.getRefreshToken());
+        if (optionalToken.isPresent()) {
+            Token token = optionalToken.get();
+            token.setRevoked(true);
+            tokenRepository.save(token);
+        } else {
+            throw new EntityNotFoundException("Токен не найден");
         }
     }
 }
