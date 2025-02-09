@@ -1,84 +1,92 @@
 package com.example.prokids.controllers;
 
+import com.example.prokids.Model.Category;
 import com.example.prokids.Model.Product;
-import com.example.prokids.Services.CategoryService;
-import com.example.prokids.Services.ProductService;
-import com.example.prokids.repositories.ProductRepository;
-import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.example.prokids.Services.Impl.ProductServiceImpl;
+import com.example.prokids.dto.ProductCreate;
+import com.example.prokids.dto.ProductResponse;
+import com.example.prokids.repositories.CategoryRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
-@Controller
-@RequestMapping("/products")
+@RestController
+@RequestMapping("/api/products")
+@RequiredArgsConstructor
+@Tag(name = "Товары")
 public class ProductController {
-    @Autowired
-    private ProductService productService;
+    private final ProductServiceImpl productService;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private CategoryService categoryService;
-
-
-    @GetMapping("/{id}/image")
-    public ResponseEntity<String> getProductImage(
-            @Parameter(description = "ID продукта", required = true) @PathVariable String id
-    ) {
-        Product product = productService.findById(id);
-        if (product != null && product.getImage() != null) {
-            String base64Image = product.getImage();
-            return new ResponseEntity<>(base64Image, HttpStatus.OK);
+    @Operation(summary = "Создать")
+    @PostMapping()
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ProductResponse> create(@RequestBody ProductCreate request) {
+        Optional<Category> category = categoryRepository.findById(request.getCategory_id());
+        if (category.isPresent()) {
+            System.out.println(category.get().getId());
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.out.println("Not found");
         }
+        if (category.isPresent()) {
+            Product product = new Product(request);
+            product.setCategory(category.get());
+            ProductResponse productResponse = new ProductResponse(productService.createProduct(product));
+            return ResponseEntity.ok(productResponse);
+        }
+
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/create")
-    public String create(Model model) {
-        model.addAttribute("new_product", new Product());
-        model.addAttribute("all_categories", categoryService.getAllCategory());
-        return "create-product";
-    }
-
-    @PostMapping("/create")
-    public String createProduct(
-            @Parameter(description = "Данные продукта", required = true) @ModelAttribute Product product,
-            @Parameter(description = "Изображение продукта", required = true) @RequestParam("imageFile") MultipartFile imageFile
+    @Operation(summary = "Добавить изображения продукта")
+    @PostMapping(path = "/addImages/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ProductResponse> addImages(
+            @PathVariable String id,
+            List<MultipartFile> images
     ) throws IOException {
-        if (!imageFile.isEmpty()) {
-            byte[] imageBytes = imageFile.getBytes();
-            String encodedImage = Base64.getEncoder().encodeToString(imageBytes);
-            product.setImage(encodedImage);
-        }
-        productService.saveProduct(product);
-        return "redirect:/products/create";
-    }
-    @GetMapping("/products")
-    public String getAllProducts(Model model) {
-        List<Product> products = productRepository.findAll();
-        model.addAttribute("products", products);
-        return "products";
+        Product product = productService.addImages(id, images);
+
+        ProductResponse productResponse = new ProductResponse(product);
+        return ResponseEntity.ok(productResponse);
     }
 
-    @GetMapping("product/{id}")
-    public String getProduct (@PathVariable("id") String id, Model model) {
-        Product product = productRepository.findById(id).orElse(null);
-        if (product != null) {
-            model.addAttribute("product", product);
-            return "product";
-        }
-        else {
-            return "productNotFound";
-        }
+    @Operation(summary = "Продукты")
+    @GetMapping()
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        List<Product> products = productService.getAllProduct();
+
+        List<ProductResponse> productResponses = products.stream().map(ProductResponse::new).toList();
+
+        return ResponseEntity.ok(productResponses);
+    }
+
+    @Operation(summary = "Продукт")
+    @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<ProductResponse> getProduct (@PathVariable("id") String id) {
+        Product product = productService.findById(id);
+        ProductResponse productResponse = new ProductResponse(product);
+
+        return ResponseEntity.ok(productResponse);
+    }
+
+    @Operation(summary = "Удалить")
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> deleteProduct(@PathVariable String id) {
+        productService.deleteProductById(id);
+        ResponseEntity.ok().build();
+        return null;
     }
 }
