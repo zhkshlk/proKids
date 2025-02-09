@@ -10,4 +10,5 @@ public interface UserService {
     void deleteUserById(String id);
     List<User> getAllUsers();
     User getByUsername(String username);
+    User getMyAccount();
 }

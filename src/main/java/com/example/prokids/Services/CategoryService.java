@@ -1,6 +1,7 @@
 package com.example.prokids.Services;
 
 import com.example.prokids.Model.Category;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,4 +11,5 @@ public interface CategoryService {
     Category saveCategory(Category category);
     void deleteCategoryById(String id);
     List<Category> getAllCategory();
+    Category addImages(String id, MultipartFile file);
 }
