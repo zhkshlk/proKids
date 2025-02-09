@@ -12,5 +12,19 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  backend:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/prokids  # db это имя контейнера
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 5462432
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/app/src
+    command: ./mvnw spring-boot:run  # Запуск с hot reload
 volumes:
-  postgres_data:
+  postgres_data:  # Определение тома для базы данных
