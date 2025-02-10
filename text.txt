@@ -1,0 +1,26 @@
+Создайте Docker Network
+docker network create prokids-network
+
+Создать контейнер для базы данных
+docker run -d \
+  --name prokids-db \
+  --network=prokids-network \
+  -e POSTGRES_DB=prokids \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=5462432 \
+  -p 5432:5432 \
+  postgres:17
+
+Подключиться к базе
+docker exec -it prokids-db psql -U postgres -d prokids
+
+Создать контейнер для приложения
+docker build --no-cache -t prokids-app .
+docker run -d \
+  --name prokids-app \
+  --network=prokids-network \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://prokids-db:5432/prokids \
+  -e SPRING_DATASOURCE_USERNAME=postgres \
+  -e SPRING_DATASOURCE_PASSWORD=5462432 \
+  -p 8080:8080 \
+  prokids-app

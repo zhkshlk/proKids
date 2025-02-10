@@ -5,9 +5,7 @@ import com.example.prokids.Model.ProductImage;
 import com.example.prokids.Services.ProductService;
 import com.example.prokids.repositories.ImageRepository;
 import com.example.prokids.repositories.ProductRepository;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,17 +17,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@Data
 @RequiredArgsConstructor
-
 public class ProductServiceImpl implements ProductService {
     private static final String UPLOAD_DIR = "uploads/images/products";
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
 
 
     @Override

@@ -8,7 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,18 +21,21 @@ import java.util.Objects;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtServiceImpl {
-    private TokenRepository tokenRepository;
-    @Autowired
-    public JwtServiceImpl(TokenRepository tokenRepository) {
-        this.tokenRepository = tokenRepository;
-    }
+    private final TokenRepository tokenRepository;
 
     @Value("${jwt.secret.access}")
     private String jwtSecretAccessKey;
 
     @Value("${jwt.secret.refresh}")
     private String jwtSecretRefreshKey;
+
+    @Value("${jwt.secret.access.expiration}")
+    private int jwtSecretAccessExpiration;
+
+    @Value("${jwt.secret.refresh.expiration}")
+    private int jwtSecretRefreshExpiration;
 
 
     private Key getAccessSigningKey() {
@@ -64,9 +67,9 @@ public class JwtServiceImpl {
         }
 
         if (Objects.equals(tokenType, "refresh")) {
-            return generateToken(claims, userDetails, getRefreshSigningKey(), 7 * 24 * 60 * 60 * 1000); // 7 дней
+            return generateToken(claims, userDetails, getRefreshSigningKey(), jwtSecretRefreshExpiration); // 7 дней
         } else {
-            return generateToken(claims, userDetails, getAccessSigningKey(), 15 * 60 * 1000); // 15 минут
+            return generateToken(claims, userDetails, getAccessSigningKey(), jwtSecretAccessExpiration); // 15 минут
         }
     }
 

@@ -34,3 +34,5 @@ build/
 
 ### Static files
 uploads/
+
+.env
