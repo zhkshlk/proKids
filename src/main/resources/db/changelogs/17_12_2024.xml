@@ -54,6 +54,9 @@
     </changeSet>
 
     <changeSet id="6" author="zhkshlk">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM roles</sqlCheck>
+        </preConditions>
         <loadData tableName="roles" file="data/roles.csv" relativeToChangelogFile="true" separator=";"/>
     </changeSet>
 
