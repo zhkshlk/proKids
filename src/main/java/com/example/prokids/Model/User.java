@@ -43,6 +43,9 @@ public class User implements UserDetails {
     @Column(name = "enabled")
     private boolean enabled = true;
 
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
+
     public User(String username, String password, List<Role>  role){
         this.username = username;
         this.password = password;

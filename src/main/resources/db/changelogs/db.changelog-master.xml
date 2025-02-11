@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <include file="17_12_2024.xml" relativeToChangelogFile="true"/>
+    <include file="11_01_2025.xml" relativeToChangelogFile="true"/>
+    <include file="20_01_2025.xml" relativeToChangelogFile="true"/>
+    <include file="create-token-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-images-table.xml" relativeToChangelogFile="true"/>
+    <include file="add-image-col-category.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

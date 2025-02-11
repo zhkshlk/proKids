@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:17
+    env_file: .env
     container_name: prokids-db
     restart: always
     environment:
@@ -12,5 +13,24 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  backend:
+    build: .
+    env_file: .env
+    restart: no
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/prokids
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 5462432
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/app/src
+    command: ["./wait-for-it.sh", "db:5432", "--", "./mvnw", "spring-boot:run", "-DskipTests"]
+
+networks:
+  prokids-network:
+    driver: bridge
 volumes:
-  postgres_data:
+  postgres_data:  # Определение тома для базы данных

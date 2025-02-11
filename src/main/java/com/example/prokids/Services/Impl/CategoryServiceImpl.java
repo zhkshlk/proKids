@@ -1,7 +1,6 @@
 package com.example.prokids.Services.Impl;
 
 import com.example.prokids.Model.Category;
-import com.example.prokids.Model.ProductImage;
 import com.example.prokids.Services.CategoryService;
 import com.example.prokids.repositories.CategoryRepository;
 import lombok.Data;
@@ -20,13 +19,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@Data
 @RequiredArgsConstructor
-
 public class CategoryServiceImpl implements CategoryService {
     private static final String UPLOAD_DIR = "uploads/images/category";
-    @Autowired
-    private CategoryRepository categoryRepository;
+
+    private final CategoryRepository categoryRepository;
+
     @Override
     public Category findById(String id) {
         return categoryRepository.findById(id).orElse(null);
