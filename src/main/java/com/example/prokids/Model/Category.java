@@ -1,12 +1,17 @@
 package com.example.prokids.Model;
 
+import com.example.prokids.dto.CategoryCreate;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "categories")
 public class Category {
     @Id
@@ -24,4 +29,9 @@ public class Category {
 
     @Column(name = "image")
     private String image;
+
+    public Category(CategoryCreate request) {
+        this.name = request.getName();
+        this.description = request.getDescription();
+    }
 }

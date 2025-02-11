@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="add-product-images" author="arstanbek">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="product_images"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE product_images (
+                id varchar default gen_random_uuid() not null primary key,
+                product_id varchar not null,
+                image_path varchar(255) not null,
+                foreign key (product_id) references products(id) on delete cascade
+            );
+        </sql>
+    </changeSet>
+</databaseChangeLog>

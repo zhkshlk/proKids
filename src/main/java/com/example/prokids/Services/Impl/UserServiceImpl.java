@@ -5,7 +5,9 @@ import com.example.prokids.Model.Role;
 import com.example.prokids.Model.User;
 import com.example.prokids.Services.UserService;
 import com.example.prokids.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,10 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-
-    private PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Override
     public User findById(String id) {
@@ -56,6 +54,18 @@ public class UserServiceImpl implements UserService {
 
     public UserDetailsService userDetailsService() {
         return this::getByUsername;
+    }
+
+    public User getCurrentUser() {
+        // Получение имени пользователя из контекста Spring Security
+        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getByUsername(username);
+    }
+
+    public User getMyAccount() {
+        User currentUser = getCurrentUser();
+
+        return userRepository.findById(currentUser.getId()).get();
     }
 
 }

@@ -46,8 +46,8 @@ public class SecurityConfig {
             }))
             // насторойка доступа к endpoint
             .authorizeHttpRequests(request -> request
-                    .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/test/permitAll").permitAll()
+                    .requestMatchers("/api/**").permitAll()
                     .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
                     .requestMatchers("/css/**", "/images/**", "/uploads/**").permitAll()
                     .anyRequest().authenticated()

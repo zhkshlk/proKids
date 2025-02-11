@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Test Controller", description = "Для теста")
 @RestController
 @Controller
-@RequestMapping("/test")
+@RequestMapping("/api/test")
 public class MyTestController {
 
     @Operation(summary = "permitAll")
