@@ -3,9 +3,7 @@ package com.example.prokids.Services.Impl;
 import com.example.prokids.Model.Category;
 import com.example.prokids.Services.CategoryService;
 import com.example.prokids.repositories.CategoryRepository;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

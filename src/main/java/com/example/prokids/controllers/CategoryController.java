@@ -21,6 +21,15 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
 
+    @Operation(summary = "Категории")
+    @GetMapping
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<List<CategoryResponse>> getAllCategories() {
+        List<Category> categories = categoryService.getAllCategory();
+        List<CategoryResponse> categoryResponses = categories.stream().map(CategoryResponse::new).toList();
+        return ResponseEntity.ok(categoryResponses);
+    }
+
     @Operation(summary = "Категория")
     @GetMapping("/{id}")
     @PreAuthorize("permitAll()")
@@ -29,14 +38,6 @@ public class CategoryController {
         CategoryResponse categoryResponse = new CategoryResponse(category);
 
         return ResponseEntity.ok(categoryResponse);
-    }
-    @Operation(summary = "Категории")
-    @GetMapping
-    @PreAuthorize("permitAll()")
-    private ResponseEntity<List<CategoryResponse>> getAllCategories() {
-        List<Category> categories = categoryService.getAllCategory();
-        List<CategoryResponse> categoryResponses = categories.stream().map(CategoryResponse::new).toList();
-        return ResponseEntity.ok(categoryResponses);
     }
 
     @Operation(summary = "Создать")

@@ -1,10 +1,9 @@
 package com.example.prokids.controllers;
 
-import com.example.prokids.Services.Impl.AuthenticationServiceImpl;
+import com.example.prokids.Services.AuthenticationService;
 import com.example.prokids.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthenticationServiceImpl authenticationService;
+    private final AuthenticationService authenticationService;
 
     @Operation(summary = "Регистрация")
     @PostMapping("/registration")

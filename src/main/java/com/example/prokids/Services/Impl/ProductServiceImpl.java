@@ -5,7 +5,11 @@ import com.example.prokids.Model.ProductImage;
 import com.example.prokids.Services.ProductService;
 import com.example.prokids.repositories.ImageRepository;
 import com.example.prokids.repositories.ProductRepository;
+import com.example.prokids.specification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -74,7 +78,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProduct() {
-        return productRepository.findAll();
+    public Page<Product> getAllProduct(
+            Double minPrice, Double maxPrice, String category, Pageable pageable
+    ) {
+        Specification<Product> spec = Specification.where(ProductSpecification.filterByPrice(minPrice, maxPrice))
+                .and(ProductSpecification.filterByCategory(category));
+        return productRepository.findAll(spec, pageable);
     }
 }
