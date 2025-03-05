@@ -11,4 +11,6 @@ public interface UserService {
     List<User> getAllUsers();
     User getByUsername(String username);
     User getMyAccount();
+
+    User getCurrentUser();
 }
