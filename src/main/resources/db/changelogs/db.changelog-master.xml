@@ -11,4 +11,5 @@
     <include file="create-images-table.xml" relativeToChangelogFile="true"/>
     <include file="add-image-col-category.xml" relativeToChangelogFile="true"/>
     <include file="create-cart-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-order-table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
