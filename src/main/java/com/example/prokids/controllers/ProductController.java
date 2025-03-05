@@ -34,11 +34,7 @@ public class ProductController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ProductResponse> create(@RequestBody ProductCreate request) {
         Optional<Category> category = categoryRepository.findById(request.getCategory_id());
-        if (category.isPresent()) {
-            System.out.println(category.get().getId());
-        } else {
-            System.out.println("Not found");
-        }
+
         if (category.isPresent()) {
             Product product = new Product(request);
             product.setCategory(category.get());
