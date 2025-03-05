@@ -1,0 +1,23 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
+
+    <changeSet id="cart" author="arstanbek">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="cart"/>
+            </not>
+        </preConditions>
+        <createTable tableName="cart">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="user_id" type="varchar(255)"/>
+            <column name="product_id" type="varchar(255)"/>
+            <column name="quantity" type="integer"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

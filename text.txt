@@ -24,3 +24,11 @@ docker run -d \
   -e SPRING_DATASOURCE_PASSWORD=5462432 \
   -p 8080:8080 \
   prokids-app
+
+
+очистить liqubase
+mvn liquibase:clearCheckSums \
+  -Dliquibase.url=jdbc:postgresql://localhost:5432/prokids \
+  -Dliquibase.username=postgres \
+  -Dliquibase.password=5462432 \
+  -Dliquibase.changeLogFile=src/main/resources/db/changelogs/db.changelog-master.xml
