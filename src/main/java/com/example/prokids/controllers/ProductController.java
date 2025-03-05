@@ -2,13 +2,15 @@ package com.example.prokids.controllers;
 
 import com.example.prokids.Model.Category;
 import com.example.prokids.Model.Product;
-import com.example.prokids.Services.Impl.ProductServiceImpl;
+import com.example.prokids.Services.ProductService;
 import com.example.prokids.dto.ProductCreate;
 import com.example.prokids.dto.ProductResponse;
 import com.example.prokids.repositories.CategoryRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Tag(name = "Товары")
 public class ProductController {
-    private final ProductServiceImpl productService;
+    private final ProductService productService;
     private final CategoryRepository categoryRepository;
 
     @Operation(summary = "Создать")
@@ -63,10 +65,15 @@ public class ProductController {
     @Operation(summary = "Продукты")
     @GetMapping()
     @PreAuthorize("permitAll()")
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
-        List<Product> products = productService.getAllProduct();
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String category,
+            Pageable pageable
+    ) {
+        Page<Product> products = productService.getAllProduct(minPrice, maxPrice, category, pageable);
 
-        List<ProductResponse> productResponses = products.stream().map(ProductResponse::new).toList();
+        Page<ProductResponse> productResponses = products.map(ProductResponse::new);
 
         return ResponseEntity.ok(productResponses);
     }
