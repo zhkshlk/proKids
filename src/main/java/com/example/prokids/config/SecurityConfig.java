@@ -32,24 +32,31 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
     return httpSecurity
-            // отключить csrf
-            .csrf(AbstractHttpConfigurer::disable)
             // настройка cors
             .cors(cors -> cors.configurationSource(request -> {
                 var corsConfig = new CorsConfiguration();
-                corsConfig.setAllowedOrigins(List.of("*"));
+                corsConfig.setAllowedOrigins(List.of("http://localhost:5173"));
                 corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 corsConfig.setAllowedHeaders(List.of("*"));
                 corsConfig.setAllowCredentials(true);
                 return corsConfig;
             }))
+            // отключить csrf
+            .csrf(AbstractHttpConfigurer::disable)
             // насторойка доступа к endpoint
             .authorizeHttpRequests(request -> request
-                    .requestMatchers("/test/permitAll").permitAll()
-                    .requestMatchers("/api/**").permitAll()
-                    .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
-                    .requestMatchers("/css/**", "/images/**", "/uploads/**").permitAll()
+                    .requestMatchers(
+                            "/api/*",
+                            "/api/**",
+                            "/swagger-ui/**",
+                            "/swagger-resources/*",
+                            "/v3/api-docs/**",
+                            "/css/**",
+                            "/images/**",
+                            "/uploads/**"
+                    ).permitAll()
                     .anyRequest().authenticated()
             )
             .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))

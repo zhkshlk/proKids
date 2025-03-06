@@ -1,6 +1,7 @@
 package com.example.prokids.Services;
 
 import com.example.prokids.Model.User;
+import com.example.prokids.dto.UserUpdate;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface UserService {
     User getMyAccount();
 
     User getCurrentUser();
+
+    User updateMyAccount(UserUpdate request);
 }
