@@ -23,11 +23,36 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
-@RequiredArgsConstructor
 @Tag(name = "Товары")
+@RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
     private final CategoryRepository categoryRepository;
+
+    @Operation(summary = "Продукты")
+    @GetMapping()
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String category,
+            Pageable pageable
+    ) {
+        Page<Product> products = productService.getAllProduct(minPrice, maxPrice, category, pageable);
+
+        Page<ProductResponse> productResponses = products.map(ProductResponse::new);
+
+        return ResponseEntity.ok(productResponses);
+    }
+
+    @Operation(summary = "Продукт")
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getProduct (@PathVariable("id") String id) {
+        Product product = productService.findById(id);
+        ProductResponse productResponse = new ProductResponse(product);
+
+        return ResponseEntity.ok(productResponse);
+    }
 
     @Operation(summary = "Создать")
     @PostMapping()
@@ -58,31 +83,6 @@ public class ProductController {
         return ResponseEntity.ok(productResponse);
     }
 
-    @Operation(summary = "Продукты")
-    @GetMapping()
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<Page<ProductResponse>> getAllProducts(
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) String category,
-            Pageable pageable
-    ) {
-        Page<Product> products = productService.getAllProduct(minPrice, maxPrice, category, pageable);
-
-        Page<ProductResponse> productResponses = products.map(ProductResponse::new);
-
-        return ResponseEntity.ok(productResponses);
-    }
-
-    @Operation(summary = "Продукт")
-    @GetMapping("/{id}")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<ProductResponse> getProduct (@PathVariable("id") String id) {
-        Product product = productService.findById(id);
-        ProductResponse productResponse = new ProductResponse(product);
-
-        return ResponseEntity.ok(productResponse);
-    }
 
     @Operation(summary = "Удалить")
     @DeleteMapping("/{id}")

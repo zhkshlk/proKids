@@ -10,12 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Auth Controller", description = "Управление аутентификацией и регистрацией")
 @RestController
-@Controller
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {

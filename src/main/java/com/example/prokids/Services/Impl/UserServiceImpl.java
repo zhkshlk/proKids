@@ -4,6 +4,7 @@ package com.example.prokids.Services.Impl;
 import com.example.prokids.Model.Role;
 import com.example.prokids.Model.User;
 import com.example.prokids.Services.UserService;
+import com.example.prokids.dto.UserUpdate;
 import com.example.prokids.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+
 
     @Override
     public User findById(String id) {
@@ -47,6 +49,15 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new RuntimeException("Пользователь с такими данными уже существует");
         }
+    }
+
+    @Override
+    public User updateMyAccount(UserUpdate request) {
+        User user = this.getMyAccount();
+        user.setEmail(request.getEmail());
+        // user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setUsername(request.getUsername());
+        return userRepository.save(user);
     }
 
     public UserDetailsService userDetailsService() {

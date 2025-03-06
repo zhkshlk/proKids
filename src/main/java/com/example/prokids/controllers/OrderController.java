@@ -18,6 +18,14 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     private final OrderService orderService;
 
+    @GetMapping("/all")
+    public ResponseEntity<Page<OrderResponse>> getAll(Pageable pageable) {
+        Page<Order> orderItems = orderService.getAll(pageable);
+
+        Page<OrderResponse> orderResponse = orderItems.map(OrderResponse::new);
+        return ResponseEntity.ok(orderResponse);
+    }
+
     @GetMapping
     public ResponseEntity<Page<OrderResponse>> get(Pageable pageable) {
         Page<Order> orderItems = orderService.get(pageable);
